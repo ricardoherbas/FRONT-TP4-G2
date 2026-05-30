@@ -36,6 +36,7 @@ async function cargarTodasNotas() {
         <p>MATERIA: ${nota.idMateria}</p>
         <p>NOTA: ${nota.nota}</p>
         <p>FECHA: ${nota.fecha}</p>
+        <br>
       `
       cardContainerNotas.append(div)
     })
