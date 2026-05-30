@@ -1,25 +1,21 @@
 const cardContainerNotas = document.querySelector('#card-container-notas')
 const btnNotas = document.querySelector('#btn-notas')
 
-const cardContainerNotaLegajo = document.querySelector('#card-container-nota-legajo')
-const btnNotaLegajo = document.querySelector('#btn-nota-legajo')
-const inputLegajoN = document.querySelector('#input-legajoN')
+const cardContainerNotaId = document.querySelector('#card-container-nota-id')
+const btnNotaId = document.querySelector('#btn-nota-id')
+const inputIdNotaBuscar = document.querySelector('#input-idNotaBuscar')
 
 const cardContainerNotaNueva = document.querySelector('#card-container-nota-nueva')
 const btnNotaNueva = document.querySelector('#btn-nota-nueva')
-const inputIdNota = document.querySelector('#input-idNota')
 const inputLegajoNota = document.querySelector('#input-legajoNota')
 const inputIdMateriaNota = document.querySelector('#input-idMateriaNota')
 const inputNotaValor = document.querySelector('#input-notaValor')
-const inputFechaNota = document.querySelector('#input-fechaNota')
 
 const cardContainerNotaModificar = document.querySelector('#card-container-nota-modificar')
 const btnNotaModificar = document.querySelector('#btn-nota-modificar')
 const inputIdNotaM = document.querySelector('#input-idNotaM')
-const inputLegajoNotaM = document.querySelector('#input-legajoNotaM')
 const inputIdMateriaNotaM = document.querySelector('#input-idMateriaNotaM')
 const inputNotaValorM = document.querySelector('#input-notaValorM')
-const inputFechaNotaM = document.querySelector('#input-fechaNotaM')
 
 const cardContainerNotaEliminar = document.querySelector('#card-container-nota-eliminar')
 const btnNotaEliminar = document.querySelector('#btn-nota-eliminar')
@@ -48,41 +44,44 @@ async function cargarTodasNotas() {
   }
 }
 
-async function cargarNotasPorLegajo() {
+async function cargarNotaPorId() {
   try {
-    const legajo = inputLegajoN.value.trim()
-    if (!legajo) return alert("Ingrese un legajo válido")
+    const id = inputIdNotaBuscar.value.trim()
+    if (!id) return alert("Ingrese un ID válido")
 
-    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/notas/${legajo}`)
-    if (!response.ok) throw new Error(`Notas del legajo ${legajo} no encontradas`)
+    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/notas/${id}`)
+    if (!response.ok) throw new Error(`Nota con ID ${id} no encontrada`)
 
-    const notas = await response.json()
-    const lista = Array.isArray(notas) ? notas : [notas]
-
-    cardContainerNotaLegajo.innerHTML = ''
-    lista.forEach(nota => {
-      cardContainerNotaLegajo.innerHTML += `
-        <div class="card">
-          <p>ID: ${nota.id}</p>
-          <p>MATERIA: ${nota.idMateria}</p>
-          <p>NOTA: ${nota.nota}</p>
-          <p>FECHA: ${nota.fecha}</p>
-        </div>
-      `
-    })
+    const nota = await response.json()
+    cardContainerNotaId.innerHTML = `
+      <div class="card">
+        <p>ID: ${nota.id}</p>
+        <p>LEGAJO: ${nota.legajo}</p>
+        <p>MATERIA: ${nota.idMateria}</p>
+        <p>NOTA: ${nota.nota}</p>
+        <p>FECHA: ${nota.fecha}</p>
+      </div>
+    `
   } catch (error) {
-    console.error("Error al cargar notas por legajo:", error)
+    console.error("Error al cargar nota por ID:", error)
   }
 }
 
 async function agregarNota() {
   try {
+    const legajo = inputLegajoNota.value.trim()
+    const idMateria = inputIdMateriaNota.value.trim()
+    const nota = inputNotaValor.value.trim()
+
+    if (!legajo || !idMateria || !nota) {
+      return alert("Complete todos los campos obligatorios (legajo, materia, nota)")
+    }
+
     const nuevaNota = {
-      id: Number(inputIdNota.value.trim()),
-      legajo: Number(inputLegajoNota.value.trim()),
-      idMateria: inputIdMateriaNota.value.trim(),
-      nota: Number(inputNotaValor.value.trim()),
-      fecha: inputFechaNota.value.trim()
+      legajo: Number(legajo),
+      idMateria,
+      nota: Number(nota),
+      fecha: new Date().toLocaleDateString('es-AR') // fecha automática
     }
 
     const response = await fetch('https://tp4-nodejs-g2.onrender.com/notas', {
@@ -115,10 +114,8 @@ async function modificarNota() {
     if (!id) return alert("Ingrese un ID válido")
 
     const notaModificada = {}
-    if (inputLegajoNotaM.value) notaModificada.legajo = Number(inputLegajoNotaM.value.trim())
     if (inputIdMateriaNotaM.value) notaModificada.idMateria = inputIdMateriaNotaM.value.trim()
     if (inputNotaValorM.value) notaModificada.nota = Number(inputNotaValorM.value.trim())
-    if (inputFechaNotaM.value) notaModificada.fecha = inputFechaNotaM.value.trim()
 
     const response = await fetch(`https://tp4-nodejs-g2.onrender.com/notas/${id}`, {
       method: 'PUT',
@@ -171,7 +168,7 @@ async function eliminarNota() {
 }
 
 btnNotas.addEventListener('click', cargarTodasNotas)
-btnNotaLegajo.addEventListener('click', cargarNotasPorLegajo)
+btnNotaId.addEventListener('click', cargarNotaPorId)
 btnNotaNueva.addEventListener('click', agregarNota)
 btnNotaModificar.addEventListener('click', modificarNota)
 btnNotaEliminar.addEventListener('click', eliminarNota)
