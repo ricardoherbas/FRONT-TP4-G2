@@ -1,177 +1,177 @@
-const cardContainer = document.querySelector('#card-container-todos')
-const btnAlumnos = document.querySelector('#btn-alumnos')
+const cardContainerNotas = document.querySelector('#card-container-notas')
+const btnNotas = document.querySelector('#btn-notas')
 
-const cardContainer2 = document.querySelector('#card-container-legajo')
-const btnAlumnoLegajo = document.querySelector('#btn-alumno-legajo')
-const inputLegajo = document.querySelector('#input-legajo')
+const cardContainerNotaLegajo = document.querySelector('#card-container-nota-legajo')
+const btnNotaLegajo = document.querySelector('#btn-nota-legajo')
+const inputLegajoN = document.querySelector('#input-legajoN')
 
-const cardContainer3 = document.querySelector('#card-container-nuevo')
-const inputNombre = document.querySelector('#input-nombre')
-const inputApellido = document.querySelector('#input-apellido')
-const inputEmail = document.querySelector('#input-email')
-const btnAlumnoNuevo = document.querySelector('#btn-alumno-nuevo')
+const cardContainerNotaNueva = document.querySelector('#card-container-nota-nueva')
+const btnNotaNueva = document.querySelector('#btn-nota-nueva')
+const inputIdNota = document.querySelector('#input-idNota')
+const inputLegajoNota = document.querySelector('#input-legajoNota')
+const inputIdMateriaNota = document.querySelector('#input-idMateriaNota')
+const inputNotaValor = document.querySelector('#input-notaValor')
+const inputFechaNota = document.querySelector('#input-fechaNota')
 
-const cardContainer4 = document.querySelector('#card-container-modificar')
-const inputLegajoM = document.querySelector('#input-legajoM')
-const inputNombreM = document.querySelector('#input-nombreM')
-const inputApellidoM = document.querySelector('#input-apellidoM')
-const inputEmailM = document.querySelector('#input-emailM')
-const inputIsActiveM = document.querySelector('#input-isActiveM')
-const btnAlumnoModificado = document.querySelector('#btn-alumno-modificar')
+const cardContainerNotaModificar = document.querySelector('#card-container-nota-modificar')
+const btnNotaModificar = document.querySelector('#btn-nota-modificar')
+const inputIdNotaM = document.querySelector('#input-idNotaM')
+const inputLegajoNotaM = document.querySelector('#input-legajoNotaM')
+const inputIdMateriaNotaM = document.querySelector('#input-idMateriaNotaM')
+const inputNotaValorM = document.querySelector('#input-notaValorM')
+const inputFechaNotaM = document.querySelector('#input-fechaNotaM')
 
-const cardContainer5 = document.querySelector('#card-container-eliminar')
-const btnAlumnoEliminar = document.querySelector('#btn-alumno-eliminar')
-const inputLegajoE = document.querySelector('#input-legajoE')
+const cardContainerNotaEliminar = document.querySelector('#card-container-nota-eliminar')
+const btnNotaEliminar = document.querySelector('#btn-nota-eliminar')
+const inputIdNotaE = document.querySelector('#input-idNotaE')
 
-async function cargarTodosAlumnos() {
+async function cargarTodasNotas() {
   try {
-    const response = await fetch('https://tp4-nodejs-g2.onrender.com/alumnos')
+    const response = await fetch('https://tp4-nodejs-g2.onrender.com/notas')
     const data = await response.json()
 
-    cardContainer.innerHTML = ''
-    data.forEach(alumno => {
+    cardContainerNotas.innerHTML = ''
+    data.forEach(nota => {
       const div = document.createElement('div')
       div.classList.add('card')
       div.innerHTML = `
-        <p>LEGAJO: ${alumno.legajo}</p>
-        <p>NOMBRE: ${alumno.nombre}</p>
-        <p>APELLIDO: ${alumno.apellido}</p>
-        <p>EMAIL: ${alumno.email}</p>
-        <p>FECHA ALTA: ${alumno.fechaAlta}</p>
-        <p>MODIFICACION: ${alumno.modificacion}</p>
-        <p>IS ACTIVE: ${alumno.isActive}</p>
+        <p>ID: ${nota.id}</p>
+        <p>LEGAJO: ${nota.legajo}</p>
+        <p>MATERIA: ${nota.idMateria}</p>
+        <p>NOTA: ${nota.nota}</p>
+        <p>FECHA: ${nota.fecha}</p>
       `
-      cardContainer.append(div)
+      cardContainerNotas.append(div)
     })
   } catch (error) {
-    console.error("Error al cargar alumnos:", error)
+    console.error("Error al cargar notas:", error)
   }
 }
 
-async function cargarAlumnoPorLegajo() {
+async function cargarNotasPorLegajo() {
   try {
-    const legajo = inputLegajo.value.trim()
+    const legajo = inputLegajoN.value.trim()
     if (!legajo) return alert("Ingrese un legajo válido")
 
-    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/alumnos/${legajo}`)
-    if (!response.ok) throw new Error(`Alumno con legajo ${legajo} no encontrado`)
+    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/notas/${legajo}`)
+    if (!response.ok) throw new Error(`Notas del legajo ${legajo} no encontradas`)
 
-    const alumno = await response.json()
-    cardContainer2.innerHTML = `
-      <div class="card">
-        <p>LEGAJO: ${alumno.legajo}</p>
-        <p>NOMBRE: ${alumno.nombre}</p>
-        <p>APELLIDO: ${alumno.apellido}</p>
-        <p>EMAIL: ${alumno.email}</p>
-        <p>FECHA ALTA: ${alumno.fechaAlta}</p>
-        <p>MODIFICACION: ${alumno.modificacion}</p>
-        <p>IS ACTIVE: ${alumno.isActive}</p>
-      </div>
-    `
+    const notas = await response.json()
+    const lista = Array.isArray(notas) ? notas : [notas]
+
+    cardContainerNotaLegajo.innerHTML = ''
+    lista.forEach(nota => {
+      cardContainerNotaLegajo.innerHTML += `
+        <div class="card">
+          <p>ID: ${nota.id}</p>
+          <p>MATERIA: ${nota.idMateria}</p>
+          <p>NOTA: ${nota.nota}</p>
+          <p>FECHA: ${nota.fecha}</p>
+        </div>
+      `
+    })
   } catch (error) {
-    console.error("Error al cargar alumno por legajo:", error)
+    console.error("Error al cargar notas por legajo:", error)
   }
 }
 
-async function agregarAlumno() {
+async function agregarNota() {
   try {
-    const nombre = inputNombre.value.trim()
-    const apellido = inputApellido.value.trim()
-    const email = inputEmail.value.trim()
+    const nuevaNota = {
+      id: Number(inputIdNota.value.trim()),
+      legajo: Number(inputLegajoNota.value.trim()),
+      idMateria: inputIdMateriaNota.value.trim(),
+      nota: Number(inputNotaValor.value.trim()),
+      fecha: inputFechaNota.value.trim()
+    }
 
-    if (!nombre || !apellido || !email) return alert("Complete todos los campos")
-
-    const nuevoAlumno = { nombre, apellido, email }
-    const response = await fetch('https://tp4-nodejs-g2.onrender.com/alumnos', {
+    const response = await fetch('https://tp4-nodejs-g2.onrender.com/notas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(nuevoAlumno)
+      body: JSON.stringify(nuevaNota)
     })
 
     const data = await response.json()
-    const alumnoCreado = data.alumnoNuevo || data.alumno // según tu backend
+    const notaCreada = data.notaNueva || data.nota
 
-    cardContainer3.innerHTML = `
+    cardContainerNotaNueva.innerHTML = `
+      <p style="color:green;">Nota creada correctamente</p>
       <div class="card">
-        <p>LEGAJO: ${alumnoCreado.legajo}</p>
-        <p>NOMBRE: ${alumnoCreado.nombre}</p>
-        <p>APELLIDO: ${alumnoCreado.apellido}</p>
-        <p>EMAIL: ${alumnoCreado.email}</p>
-        <p>FECHA ALTA: ${alumnoCreado.fechaAlta}</p>
-        <p>MODIFICACION: ${alumnoCreado.modificacion}</p>
-        <p>IS ACTIVE: ${alumnoCreado.isActive}</p>
+        <p>ID: ${notaCreada.id}</p>
+        <p>LEGAJO: ${notaCreada.legajo}</p>
+        <p>MATERIA: ${notaCreada.idMateria}</p>
+        <p>NOTA: ${notaCreada.nota}</p>
+        <p>FECHA: ${notaCreada.fecha}</p>
       </div>
     `
   } catch (error) {
-    console.error("Error al agregar alumno:", error)
+    console.error("Error al crear nota:", error)
   }
 }
 
-async function modificarAlumno() {
+async function modificarNota() {
   try {
-    const legajo = inputLegajoM.value.trim()
-    if (!legajo) return alert("Ingrese un legajo válido")
+    const id = inputIdNotaM.value.trim()
+    if (!id) return alert("Ingrese un ID válido")
 
-    const alumnoModificado = {}
-    if (inputNombreM.value) alumnoModificado.nombre = inputNombreM.value.trim()
-    if (inputApellidoM.value) alumnoModificado.apellido = inputApellidoM.value.trim()
-    if (inputEmailM.value) alumnoModificado.email = inputEmailM.value.trim()
-    if (inputIsActiveM.value) alumnoModificado.isActive = (inputIsActiveM.value.trim().toLowerCase() === "true")
+    const notaModificada = {}
+    if (inputLegajoNotaM.value) notaModificada.legajo = Number(inputLegajoNotaM.value.trim())
+    if (inputIdMateriaNotaM.value) notaModificada.idMateria = inputIdMateriaNotaM.value.trim()
+    if (inputNotaValorM.value) notaModificada.nota = Number(inputNotaValorM.value.trim())
+    if (inputFechaNotaM.value) notaModificada.fecha = inputFechaNotaM.value.trim()
 
-    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/alumnos/${legajo}`, {
+    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/notas/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(alumnoModificado)
+      body: JSON.stringify(notaModificada)
     })
 
     const data = await response.json()
-    const alumnoActualizado = data.alumnoModificado || data.alumno
+    const notaActualizada = data.notaModificada || data.nota
 
-    cardContainer4.innerHTML = `
+    cardContainerNotaModificar.innerHTML = `
+      <p style="color:blue;">Nota modificada correctamente</p>
       <div class="card">
-        <p>LEGAJO: ${alumnoActualizado.legajo}</p>
-        <p>NOMBRE: ${alumnoActualizado.nombre}</p>
-        <p>APELLIDO: ${alumnoActualizado.apellido}</p>
-        <p>EMAIL: ${alumnoActualizado.email}</p>
-        <p>FECHA ALTA: ${alumnoActualizado.fechaAlta}</p>
-        <p>MODIFICACION: ${alumnoActualizado.modificacion}</p>
-        <p>IS ACTIVE: ${alumnoActualizado.isActive}</p>
+        <p>ID: ${notaActualizada.id}</p>
+        <p>LEGAJO: ${notaActualizada.legajo}</p>
+        <p>MATERIA: ${notaActualizada.idMateria}</p>
+        <p>NOTA: ${notaActualizada.nota}</p>
+        <p>FECHA: ${notaActualizada.fecha}</p>
       </div>
     `
   } catch (error) {
-    console.error("Error al modificar alumno:", error)
+    console.error("Error al modificar nota:", error)
   }
 }
 
-async function eliminarAlumnoPorLegajo() {
+async function eliminarNota() {
   try {
-    const legajo = inputLegajoE.value.trim()
-    if (!legajo) return alert("Ingrese un legajo válido")
+    const id = inputIdNotaE.value.trim()
+    if (!id) return alert("Ingrese un ID válido")
 
-    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/alumnos/${legajo}`, {
+    const response = await fetch(`https://tp4-nodejs-g2.onrender.com/notas/${id}`, {
       method: 'DELETE'
     })
 
     const data = await response.json()
-    cardContainer5.innerHTML = `
-      <p style="color:green;">${data.msg}</p>
+    cardContainerNotaEliminar.innerHTML = `
+      <p style="color:red;">${data.msg}</p>
+      ${data.nota ? `
       <div class="card">
-        <p>LEGAJO: ${data.alumno.legajo}</p>
-        <p>NOMBRE: ${data.alumno.nombre}</p>
-        <p>APELLIDO: ${data.alumno.apellido}</p>
-        <p>EMAIL: ${data.alumno.email}</p>
-        <p>FECHA ALTA: ${data.alumno.fechaAlta}</p>
-        <p>MODIFICACION: ${data.alumno.modificacion}</p>
-        <p>IS ACTIVE: ${data.alumno.isActive}</p>
-      </div>
+        <p>ID: ${data.nota.id}</p>
+        <p>LEGAJO: ${data.nota.legajo}</p>
+        <p>MATERIA: ${data.nota.idMateria}</p>
+        <p>NOTA: ${data.nota.nota}</p>
+        <p>FECHA: ${data.nota.fecha}</p>
+      </div>` : ''}
     `
   } catch (error) {
-    console.error("Error al eliminar alumno:", error)
+    console.error("Error al eliminar nota:", error)
   }
 }
 
-btnAlumnos.addEventListener('click', cargarTodosAlumnos)
-btnAlumnoLegajo.addEventListener('click', cargarAlumnoPorLegajo)
-btnAlumnoNuevo.addEventListener('click', agregarAlumno)
-btnAlumnoModificado.addEventListener('click', modificarAlumno)
-btnAlumnoEliminar.addEventListener('click', eliminarAlumnoPorLegajo)
+btnNotas.addEventListener('click', cargarTodasNotas)
+btnNotaLegajo.addEventListener('click', cargarNotasPorLegajo)
+btnNotaNueva.addEventListener('click', agregarNota)
+btnNotaModificar.addEventListener('click', modificarNota)
+btnNotaEliminar.addEventListener('click', eliminarNota)
